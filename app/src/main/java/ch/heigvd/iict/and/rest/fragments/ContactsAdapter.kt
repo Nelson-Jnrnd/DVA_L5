@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import ch.heigvd.iict.and.rest.R
 import ch.heigvd.iict.and.rest.models.Contact
+import ch.heigvd.iict.and.rest.models.ContactStatus
 import ch.heigvd.iict.and.rest.models.PhoneType
 
 class ContactsAdapter(contacts : List<Contact>, private val clickListener: OnItemClickListener) : RecyclerView.Adapter<ContactsAdapter.ViewHolder>() {
@@ -51,9 +52,11 @@ class ContactsAdapter(contacts : List<Contact>, private val clickListener: OnIte
             name.text = "${contact.name} ${contact.firstname}"
             phonenumber.text = "${contact.phoneNumber}"
 
-            //FIXME color may depend on item sync status
-            val colRes = android.R.color.holo_green_dark
-            image.setColorFilter(ContextCompat.getColor(image.context, colRes))
+            if (contact.status == ContactStatus.OK) {
+                image.setColorFilter(ContextCompat.getColor(image.context, android.R.color.holo_green_dark))
+            } else {
+                image.setColorFilter(ContextCompat.getColor(image.context, android.R.color.holo_red_dark))
+            }
 
             when(contact.type) {
                 PhoneType.HOME -> type.setImageResource(R.drawable.phone)

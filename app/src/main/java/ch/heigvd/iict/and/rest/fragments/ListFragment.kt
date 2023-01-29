@@ -38,12 +38,6 @@ class ListFragment : Fragment() {
                 if(selectedContact != null) {
                     //FIXME - user clicks on selectedContact, we want to edit it
                     Toast.makeText(requireActivity(), "TODO - Edition de ${selectedContact.firstname} ${selectedContact.name}", Toast.LENGTH_SHORT).show()
-                    // Open the edit fragment
-/*                    val editFragment = EditFragment.newInstance(selectedContact)
-                    requireActivity().supportFragmentManager.beginTransaction()
-                        .add(R.id.main_content_fragment, editFragment)
-                        .addToBackStack(null)
-                        .commit()*/
                     contactsViewModel.delete(selectedContact)
                 }
             }

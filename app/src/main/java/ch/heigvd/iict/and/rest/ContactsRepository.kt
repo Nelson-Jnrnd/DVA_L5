@@ -47,10 +47,9 @@ class ContactsRepository(private val contactsDao: ContactsDao) {
         }
     }
 
-    suspend fun insert(contact: Contact) {
-        //contact.status = ContactStatus.NEW
+    suspend fun insert(contact: Contact) : Long {
         contact.id = null
-        withContext(Dispatchers.IO) {
+        return withContext(Dispatchers.IO) {
             contactsDao.insert(contact)
         }
     }

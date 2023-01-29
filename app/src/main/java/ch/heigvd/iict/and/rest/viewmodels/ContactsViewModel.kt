@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import ch.heigvd.iict.and.rest.ContactsRepository
 import ch.heigvd.iict.and.rest.models.Contact
 import ch.heigvd.iict.and.rest.models.ContactDTO
+import ch.heigvd.iict.and.rest.models.ContactStatus
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import java.net.HttpURLConnection
@@ -34,7 +35,11 @@ class ContactsViewModel(private val repository: ContactsRepository) : ViewModel(
                 val data = connection.inputStream.bufferedReader().use { it.readText() }
                 val contacts = Gson().fromJson(data, Array<ContactDTO>::class.java)
                 contacts.forEach { contact ->
-                        insert(contact.toContact())
+                    run {
+                        val c = contact.toContact()
+                        c.status = ContactStatus.OK
+                        insert(c)
+                    }
                 }
                 println( "Enrolled with UUID: $uuid")
             }
@@ -49,7 +54,10 @@ class ContactsViewModel(private val repository: ContactsRepository) : ViewModel(
 
     fun insert(contact: Contact) {
         viewModelScope.launch {
-            repository.insert(contact)
+            contact.status = ContactStatus.NEW
+            val id = repository.insert(contact)
+            println("Inserted contact with id: $id")
+
         }
     }
 
