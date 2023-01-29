@@ -32,7 +32,6 @@ class ContactsRepository(private val contactsDao: ContactsDao) {
     }
 
     suspend fun update(contact: Contact) {
-        //contact.status = ContactStatus.MODIFIED
         withContext(Dispatchers.IO) {
             contactsDao.update(contact)
         }
