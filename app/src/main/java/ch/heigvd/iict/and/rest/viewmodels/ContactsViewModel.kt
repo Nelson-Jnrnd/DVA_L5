@@ -113,8 +113,11 @@ class ContactsViewModel(private val repository: ContactsRepository) : ViewModel(
                     it.write(Gson().toJson(ContactDTO.fromContact(contact)))
                 }
                 if (connection.responseCode == 201) {
-                    contact.status = ContactStatus.OK
-                    update(contact)
+                    connection.inputStream.bufferedReader().use {
+                        val c = Gson().fromJson(it.readText(), ContactDTO::class.java)
+                        println("Contact created with id: ${c.id}")
+                        update(c.toContact(contact.id))
+                    }
                 }
             }
         }
