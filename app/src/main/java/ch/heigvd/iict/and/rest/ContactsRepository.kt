@@ -32,9 +32,12 @@ class ContactsRepository(private val contactsDao: ContactsDao) {
     }
 
     suspend fun update(contact: Contact) {
-        //contact.status = ContactStatus.MODIFIED
         withContext(Dispatchers.IO) {
+            println("*****************")
+            println("Updating contact $contact")
             contactsDao.update(contact)
+            println("*****************")
+            println("Updated contact $contact")
         }
     }
 
