@@ -60,7 +60,7 @@ class ContactsViewModel(private val repository: ContactsRepository, private val 
                 val connection = contactURL.openConnection() as HttpURLConnection
                 connection.requestMethod = "DELETE"
                 connection.doOutput = false
-                connection.setRequestProperty(uuid_header, uuid)
+                connection.setRequestProperty(uuidHeader, uuid)
 
                 delete(contactID)
 
