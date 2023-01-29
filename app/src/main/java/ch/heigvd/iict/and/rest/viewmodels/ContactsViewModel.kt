@@ -22,7 +22,6 @@ class ContactsViewModel(private val repository: ContactsRepository) : ViewModel(
     private val uuid_header = "X-UUID"
     val allContacts = repository.allContacts
 
-    // actions
     fun enroll() {
         viewModelScope.launch {
             val enrollURL = URL(enrollPath)
@@ -46,7 +45,7 @@ class ContactsViewModel(private val repository: ContactsRepository) : ViewModel(
         }
     }
 
-    fun updateFromServer(contacts: Array<ContactDTO>) {
+    private fun updateFromServer(contacts: Array<ContactDTO>) {
         viewModelScope.launch {
             deleteAll()
             contacts.forEach { contact ->
@@ -64,7 +63,6 @@ class ContactsViewModel(private val repository: ContactsRepository) : ViewModel(
             contact.status = ContactStatus.NEW
             val id = repository.insert(contact)
             println("Inserted contact with id: $id")
-
         }
     }
 
@@ -76,7 +74,7 @@ class ContactsViewModel(private val repository: ContactsRepository) : ViewModel(
 
     fun delete(contact: Contact) {
         viewModelScope.launch {
-            repository.delete(contact)
+            repository.softDelete(contact)
         }
     }
 
