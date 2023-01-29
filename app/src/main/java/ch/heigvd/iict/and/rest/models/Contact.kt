@@ -7,15 +7,17 @@ import java.util.*
 
 @Entity
 data class Contact(@PrimaryKey(autoGenerate = true) var id: Long? = null,
-                   @SerializedName("name") var name: String,
-                   @SerializedName("firstname") var firstname: String?,
-                   @SerializedName("birthday") var birthday : Calendar?,
-                   @SerializedName("email") var email: String?,
-                   @SerializedName("address") var address: String?,
-                   @SerializedName("zip") var zip: String?,
-                   @SerializedName("city") var city: String?,
-                   @SerializedName("type") var type: PhoneType?,
-                   @SerializedName("phoneNumber") var phoneNumber: String?) {
+                   var remote_id: Long? = null,
+                   var status: ContactStatus,
+                   var name: String,
+                   var firstname: String?,
+                   var birthday : Calendar?,
+                   var email: String?,
+                   var address: String?,
+                   var zip: String?,
+                   var city: String?,
+                   var type: PhoneType?,
+                   var phoneNumber: String?) {
 
     override fun equals(other: Any?) =
                 (other is Contact) &&

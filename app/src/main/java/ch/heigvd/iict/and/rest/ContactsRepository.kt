@@ -16,7 +16,6 @@ import java.util.Calendar
 
 class ContactsRepository(private val contactsDao: ContactsDao) {
 
-
     val allContacts = contactsDao.getAllContactsLiveData()
 
     suspend fun refresh() {

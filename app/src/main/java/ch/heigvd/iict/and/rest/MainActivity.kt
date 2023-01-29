@@ -9,6 +9,7 @@ import androidx.activity.viewModels
 import ch.heigvd.iict.and.rest.databinding.ActivityMainBinding
 import ch.heigvd.iict.and.rest.fragments.ListFragment
 import ch.heigvd.iict.and.rest.models.Contact
+import ch.heigvd.iict.and.rest.models.ContactStatus
 import ch.heigvd.iict.and.rest.models.PhoneType
 import ch.heigvd.iict.and.rest.viewmodels.ContactsViewModel
 import ch.heigvd.iict.and.rest.viewmodels.ContactsViewModelFactory
@@ -32,6 +33,8 @@ class MainActivity : AppCompatActivity() {
 
             contactsViewModel.insert(
                 Contact(id = null,
+                    remote_id = null,
+                    status = ContactStatus.NEW,
                     name = "Fisher",
                     firstname = "Brenda",
                     birthday = GregorianCalendar.getInstance().apply {

@@ -8,6 +8,7 @@ import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
 import ch.heigvd.iict.and.rest.database.converters.CalendarConverter
 import ch.heigvd.iict.and.rest.models.Contact
+import ch.heigvd.iict.and.rest.models.ContactStatus
 import ch.heigvd.iict.and.rest.models.PhoneType
 import java.util.Calendar
 import java.util.GregorianCalendar
@@ -46,6 +47,8 @@ abstract class ContactsDatabase : RoomDatabase() {
                     thread {
                         if(database.contactsDao().getCount() == 0) {
                             val c1 =  Contact(  id = null,
+                                                remote_id = null,
+                                                status = ContactStatus.NEW,
                                                 name = "Hilt",
                                                 firstname = "William",
                                                 birthday = GregorianCalendar.getInstance().apply {
@@ -64,6 +67,8 @@ abstract class ContactsDatabase : RoomDatabase() {
 
                             val c2 =  Contact(  id = null,
                                                 name = "Fisher",
+                                                remote_id = null,
+                                                status = ContactStatus.NEW,
                                                 firstname = "Brenda",
                                                 birthday = GregorianCalendar.getInstance().apply {
                                                     set(Calendar.YEAR, 2001)

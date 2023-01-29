@@ -21,32 +21,34 @@ data class ContactDTO(
                 "type: $type, phoneNumber: $phoneNumber)"
     }
 
-    // Convert from ContactDTO to Contact
-    // TODO gérer les anniversaires au cas où c'est null
     fun toContact(id: Long? = null) : Contact {
         val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
         return Contact(
             id = id,
+            remote_id = this.id,
+            status = ContactStatus.OK,
             name = this.name,
             firstname = this.firstname,
-            birthday = this.birthday?.let { Calendar.getInstance().apply { time = format.parse(it) } },
+            birthday = this.birthday?.let
+            {
+                Calendar.getInstance().apply {
+                    time = format.parse(it) as Date
+                }
+            },
             email = this.email,
             address = this.address,
             zip = this.zip,
             city = this.city,
             type = this.type?.let { PhoneType.valueOf(it) },
-            phoneNumber = this.phoneNumber/*,
-            status = StatusDatabase.OK,
-            id_remote = this.id*/
+            phoneNumber = this.phoneNumber
         )
     }
 
     companion object {
-        // Convert from Contact to ContactDTO
         fun fromContact(contact: Contact) : ContactDTO {
             val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
             return ContactDTO(
-                id = contact.id, // TODO Change
+                id = contact.remote_id,
                 name = contact.name,
                 firstname = contact.firstname,
                 birthday = contact.birthday?.time?.let { format.format(it) },
