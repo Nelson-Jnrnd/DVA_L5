@@ -14,36 +14,29 @@ import kotlin.concurrent.thread
 
 class ContactsViewModel(private val repository: ContactsRepository) : ViewModel() {
 
+    private val path = "https://daa.iict.ch"
+    private val enrollPath: String = "$path/enroll"
+    private val contactsPath: String = "$path/contacts"
+    private var uuid: String? = null
+    private val uuid_header = "X-UUID"
     val allContacts = repository.allContacts
 
     // actions
     fun enroll() {
         viewModelScope.launch {
-            val url = "https://daa.iict.ch/"
-            // Supprimer toutes les données locales
-            //deleteAll() //TODO demander si on doit garder les trucs ajoutés localement
-            // TODO handle quand pas de connection
-            val enrollURL = URL(url + "enroll")
-            val contactURL = URL(url + "contacts")
+            val enrollURL = URL(enrollPath)
+            val contactURL = URL(contactsPath)
             thread {
-                // Get a new UUID
-                val uuid = enrollURL.readText(Charsets.UTF_8)
-
-                // Get all contacts corresponding to the UUID
+                deleteAll()
+                uuid = enrollURL.readText(Charsets.UTF_8)
                 val connection = contactURL.openConnection() as HttpURLConnection
-                // Set the X-UUID header
-                connection.setRequestProperty("X-UUID", uuid)
-                // TODO check the response code
-                // Read the response
-                val response = connection.inputStream.bufferedReader().use {it.readText()}
-                // Parse the response into a list of contacts
-                val contactDTOList = Gson().fromJson(response, Array<ContactDTO>::class.java)
-                val contactList = mutableListOf<Contact>()
-                contactList.addAll(contactDTOList.map{ it.toContact() })
-                // Insert all contacts into the local database
-                for (contact in contactList) {
-                    insert(contact)
+                connection.setRequestProperty(uuid_header, uuid)
+                val data = connection.inputStream.bufferedReader().use { it.readText() }
+                val contacts = Gson().fromJson(data, Array<ContactDTO>::class.java)
+                contacts.forEach { contact ->
+                        insert(contact.toContact())
                 }
+                println( "Enrolled with UUID: $uuid")
             }
         }
     }

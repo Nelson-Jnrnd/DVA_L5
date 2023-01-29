@@ -16,63 +16,8 @@ import java.util.Calendar
 
 class ContactsRepository(private val contactsDao: ContactsDao) {
 
-    private val path = "https://daa.iict.ch"
-    private val enrollPath: String = "$path/enroll"
-    private val contactsPath: String = "$path/contacts"
-    private var uuid: String? = null
-    private val uuid_header = "X-UUID"
+
     val allContacts = contactsDao.getAllContactsLiveData()
-
-    suspend fun enroll() {
-        withContext(Dispatchers.IO) {
-            contactsDao.clearAllContacts()
-            uuid = URL(enrollPath).readText(Charsets.UTF_8)
-            /*// Get all the contacts as json array from the server uuid is sent in the header
-            val contactsJson = URL(contactsPath)
-                .openConnection()
-                .apply {
-                    setRequestProperty(uuid_header, uuid!!)
-                }
-                .getInputStream()
-                .bufferedReader()
-                .use { it.readText() }
-            // Parse the json array and insert the contacts in the database using GSON
-            println(contactsJson)
-            val contacts = GsonBuilder()
-                /*.registerTypeAdapter(Calendar::class.java, CalendarDeserializer())*/
-                .create()
-                .fromJson(contactsJson, mutableListOf<Contact>()::class.java)
-            contacts.forEach { contact ->
-                run {
-                    //contact.status = ContactStatus.OK
-                    contactsDao.insert(contact)
-                }
-            }*/
-
-            val url = URL("https://daa.iict.ch/contacts")
-
-
-            val conn = url.openConnection() as HttpURLConnection
-            conn.requestMethod = "GET"
-            conn.setRequestProperty("x-uuid", uuid!!)
-
-            var data = "";
-            BufferedReader(InputStreamReader(conn.inputStream)).use { br ->
-                data = br.readText()
-            }
-
-            val gson = Gson()
-            val valtype = mutableListOf<Contact>()::class.java
-            val result = gson.fromJson(data, valtype)
-
-            result.forEach { contact ->
-                run {
-                    //contact.status = ContactStatus.OK
-                    contactsDao.insert(contact)
-                }
-            }
-        }
-    }
 
     suspend fun refresh() {
         withContext(Dispatchers.IO) {
@@ -95,10 +40,10 @@ class ContactsRepository(private val contactsDao: ContactsDao) {
     }
 
     suspend fun deleteAll() {
-        contactsDao.getAllContacts().forEach {
-            //it.status = ContactStatus.DELETED
-            withContext(Dispatchers.IO) {
-                contactsDao.update(it)
+        withContext(Dispatchers.IO) {
+            contactsDao.getAllContacts().forEach {
+                //it.status = ContactStatus.DELETED
+                contactsDao.delete(it)
             }
         }
     }
