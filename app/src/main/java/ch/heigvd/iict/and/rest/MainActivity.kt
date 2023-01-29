@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Button
 import android.widget.Toast
 import androidx.activity.viewModels
 import ch.heigvd.iict.and.rest.databinding.ActivityMainBinding
@@ -26,6 +27,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val plusButton = findViewById<Button>(R.id.main_fab_new)
+        /*plusButton.setOnClickListener {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.main_content_fragment, EditFragment.newInstance())
+                .addToBackStack(null)
+                .commit()
+        }*/
 
         binding.mainFabNew.setOnClickListener {
             // FIXME - create a new contact
