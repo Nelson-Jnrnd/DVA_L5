@@ -9,6 +9,8 @@ import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import ch.heigvd.iict.and.rest.ContactsApplication
+import ch.heigvd.iict.and.rest.EditFragment
+import ch.heigvd.iict.and.rest.R
 import ch.heigvd.iict.and.rest.databinding.FragmentListBinding
 import ch.heigvd.iict.and.rest.viewmodels.ContactsViewModel
 import ch.heigvd.iict.and.rest.viewmodels.ContactsViewModelFactory
@@ -36,6 +38,13 @@ class ListFragment : Fragment() {
                 if(selectedContact != null) {
                     //FIXME - user clicks on selectedContact, we want to edit it
                     Toast.makeText(requireActivity(), "TODO - Edition de ${selectedContact.firstname} ${selectedContact.name}", Toast.LENGTH_SHORT).show()
+                    // Open the edit fragment
+/*                    val editFragment = EditFragment.newInstance(selectedContact)
+                    requireActivity().supportFragmentManager.beginTransaction()
+                        .add(R.id.main_content_fragment, editFragment)
+                        .addToBackStack(null)
+                        .commit()*/
+                    contactsViewModel.delete(selectedContact)
                 }
             }
         }

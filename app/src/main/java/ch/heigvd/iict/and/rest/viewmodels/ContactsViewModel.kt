@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import ch.heigvd.iict.and.rest.ContactsRepository
+import ch.heigvd.iict.and.rest.models.Contact
 import kotlinx.coroutines.launch
 
 class ContactsViewModel(private val repository: ContactsRepository) : ViewModel() {
@@ -13,13 +14,37 @@ class ContactsViewModel(private val repository: ContactsRepository) : ViewModel(
     // actions
     fun enroll() {
         viewModelScope.launch {
-            // TODO
+            repository.enroll(allContacts.value?.get(0)!!)
         }
     }
 
     fun refresh() {
         viewModelScope.launch {
-            // TODO
+            repository.refresh()
+        }
+    }
+
+    fun insert(contact: Contact) {
+        viewModelScope.launch {
+            repository.insert(contact)
+        }
+    }
+
+    fun deleteAll() {
+        viewModelScope.launch {
+            repository.deleteAll()
+        }
+    }
+
+    fun delete(contact: Contact) {
+        viewModelScope.launch {
+            repository.delete(contact)
+        }
+    }
+
+    fun update(contact: Contact) {
+        viewModelScope.launch {
+            repository.update(contact)
         }
     }
 

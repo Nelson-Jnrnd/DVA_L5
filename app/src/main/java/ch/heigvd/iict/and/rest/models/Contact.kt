@@ -4,12 +4,10 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.util.*
 
-
-
 @Entity
 class Contact(@PrimaryKey(autoGenerate = true) var id: Long? = null,
               var remoteId: Long? = null,
-              var status: ContactStatus?,
+              var status: ContactStatus = ContactStatus.NEW,
               var name: String,
               var firstname: String?,
               var birthday : Calendar?,

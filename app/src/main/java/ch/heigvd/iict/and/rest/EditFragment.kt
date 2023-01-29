@@ -6,11 +6,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import ch.heigvd.iict.and.rest.models.Contact
 
 class EditFragment : Fragment() {
 
     companion object {
-        fun newInstance() = EditFragment()
+        fun newInstance(selectedContact: Contact?) = EditFragment()
     }
 
     private lateinit var viewModel: EditViewModel
