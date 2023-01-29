@@ -28,19 +28,13 @@ class ContactsViewModel(private val repository: ContactsRepository) : ViewModel(
             val enrollURL = URL(enrollPath)
             val contactURL = URL(contactsPath)
             thread {
-                deleteAll()
                 uuid = enrollURL.readText(Charsets.UTF_8)
                 val connection = contactURL.openConnection() as HttpURLConnection
                 connection.setRequestProperty(uuid_header, uuid)
                 val data = connection.inputStream.bufferedReader().use { it.readText() }
                 val contacts = Gson().fromJson(data, Array<ContactDTO>::class.java)
-                contacts.forEach { contact ->
-                    run {
-                        val c = contact.toContact()
-                        c.status = ContactStatus.OK
-                        insert(c)
-                    }
-                }
+                updateFromServer(contacts)
+
                 println( "Enrolled with UUID: $uuid")
             }
         }
@@ -49,6 +43,19 @@ class ContactsViewModel(private val repository: ContactsRepository) : ViewModel(
     fun refresh() {
         viewModelScope.launch {
             repository.refresh()
+        }
+    }
+
+    fun updateFromServer(contacts: Array<ContactDTO>) {
+        viewModelScope.launch {
+            deleteAll()
+            contacts.forEach { contact ->
+                run {
+                    val c = contact.toContact()
+                    c.status = ContactStatus.OK
+                    repository.insert(c)
+                }
+            }
         }
     }
 
