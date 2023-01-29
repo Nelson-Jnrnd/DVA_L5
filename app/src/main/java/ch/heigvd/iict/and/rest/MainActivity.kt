@@ -19,7 +19,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding : ActivityMainBinding
     private val contactsViewModel: ContactsViewModel by viewModels {
-        ContactsViewModelFactory((application as ContactsApplication).repository)
+        ContactsViewModelFactory((application as ContactsApplication).repository,
+            (application as ContactsApplication).getSharedPreferences("contacts", MODE_PRIVATE))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

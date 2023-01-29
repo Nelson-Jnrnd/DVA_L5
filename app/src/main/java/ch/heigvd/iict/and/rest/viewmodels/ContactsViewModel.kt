@@ -1,5 +1,7 @@
 package ch.heigvd.iict.and.rest.viewmodels
 
+import android.content.SharedPreferences
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -14,7 +16,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import kotlin.concurrent.thread
 
-class ContactsViewModel(private val repository: ContactsRepository) : ViewModel() {
+class ContactsViewModel(private val repository: ContactsRepository, private val sharedPreferences: SharedPreferences) : ViewModel() {
 
     private val path = "https://daa.iict.ch"
     private val enrollPath: String = "$path/enroll"
@@ -23,12 +25,22 @@ class ContactsViewModel(private val repository: ContactsRepository) : ViewModel(
     private val uuidHeader = "X-UUID"
     val allContacts = repository.allContacts
 
+    init {
+        uuid = sharedPreferences.getString("uuid", null)
+        sharedPreferences.registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener { sharedPreferences, key ->
+            if (key == "uuid") {
+                uuid = sharedPreferences.getString("uuid", null)
+            }
+        })
+    }
+
     fun enroll() {
         viewModelScope.launch {
             val enrollUrl = URL(enrollPath)
             val contactUrl = URL(contactsPath)
             thread {
                 uuid = enrollUrl.readText(Charsets.UTF_8)
+                sharedPreferences.edit().putString("uuid", uuid).apply()
                 val connection = contactUrl.openConnection() as HttpURLConnection
                 connection.setRequestProperty(uuidHeader, uuid)
                 val data = connection.inputStream.bufferedReader().use { it.readText() }
@@ -125,11 +137,12 @@ class ContactsViewModel(private val repository: ContactsRepository) : ViewModel(
 
 }
 
-class ContactsViewModelFactory(private val repository: ContactsRepository) : ViewModelProvider.Factory {
+class ContactsViewModelFactory(private val repository: ContactsRepository,
+                               private val sharedPreferences: SharedPreferences) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ContactsViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return ContactsViewModel(repository) as T
+            return ContactsViewModel(repository, sharedPreferences) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

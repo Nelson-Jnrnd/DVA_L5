@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import ch.heigvd.iict.and.rest.ContactsApplication
@@ -20,7 +21,10 @@ class ListFragment : Fragment() {
     private lateinit var binding : FragmentListBinding
 
     private val contactsViewModel: ContactsViewModel by activityViewModels {
-        ContactsViewModelFactory(((requireActivity().application as ContactsApplication).repository))
+        ContactsViewModelFactory((requireActivity().application as ContactsApplication).repository,
+            (requireActivity().application as ContactsApplication).getSharedPreferences("contacts",
+                AppCompatActivity.MODE_PRIVATE
+            ))
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
