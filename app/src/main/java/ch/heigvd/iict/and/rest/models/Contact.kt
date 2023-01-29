@@ -2,21 +2,20 @@ package ch.heigvd.iict.and.rest.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.google.gson.annotations.SerializedName
 import java.util.*
 
 @Entity
-class Contact(@PrimaryKey(autoGenerate = true) var id: Long? = null,
-              var remoteId: Long? = null,
-              var status: ContactStatus = ContactStatus.NEW,
-              var name: String,
-              var firstname: String?,
-              var birthday : Calendar?,
-              var email: String?,
-              var address: String?,
-              var zip: String?,
-              var city: String?,
-              var type: PhoneType?,
-              var phoneNumber: String?) {
+data class Contact(@PrimaryKey(autoGenerate = true) var id: Long? = null,
+                   @SerializedName("name") var name: String,
+                   @SerializedName("firstname") var firstname: String?,
+                   @SerializedName("birthday") var birthday : Calendar?,
+                   @SerializedName("email") var email: String?,
+                   @SerializedName("address") var address: String?,
+                   @SerializedName("zip") var zip: String?,
+                   @SerializedName("city") var city: String?,
+                   @SerializedName("type") var type: PhoneType?,
+                   @SerializedName("phoneNumber") var phoneNumber: String?) {
 
     override fun equals(other: Any?) =
                 (other is Contact) &&
@@ -31,15 +30,15 @@ class Contact(@PrimaryKey(autoGenerate = true) var id: Long? = null,
                 phoneNumber == other.phoneNumber
 
     override fun toString(): String {
-        return  "Contact(id=$id, remoteId=$remoteId, status=$status, name='$name', " +
-                "firstname=$firstname, birthday=$birthday, email=$email, address=$address, " +
-                "zip=$zip, city=$city, type=$type, phoneNumber=$phoneNumber)"
+        return  "Contact(id: $id, name: $name, firstname: $firstname, " +
+                "birthday: $birthday, email :$email, address: $address, zip: $zip, city: $city, " +
+                "type: $type, phoneNumber: $phoneNumber)"
     }
 
     override fun hashCode(): Int {
         var result = id?.hashCode() ?: 0
-        result = 31 * result + (remoteId?.hashCode() ?: 0)
-        result = 31 * result + (status?.hashCode() ?: 0)
+        /*result = 31 * result + (remoteId?.hashCode() ?: 0)
+        result = 31 * result + (status?.hashCode() ?: 0)*/
         result = 31 * result + name.hashCode()
         result = 31 * result + (firstname?.hashCode() ?: 0)
         result = 31 * result + (birthday?.hashCode() ?: 0)
