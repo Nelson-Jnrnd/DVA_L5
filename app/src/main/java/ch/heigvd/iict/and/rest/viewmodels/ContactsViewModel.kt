@@ -1,5 +1,6 @@
 package ch.heigvd.iict.and.rest.viewmodels
 
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -19,18 +20,17 @@ class ContactsViewModel(private val repository: ContactsRepository) : ViewModel(
     private val enrollPath: String = "$path/enroll"
     private val contactsPath: String = "$path/contacts"
     private var uuid: String? = null
-    private val uuid_header = "X-UUID"
+    private val uuidHeader = "X-UUID"
     val allContacts = repository.allContacts
 
-    // actions
     fun enroll() {
         viewModelScope.launch {
-            val enrollURL = URL(enrollPath)
-            val contactURL = URL(contactsPath)
+            val enrollUrl = URL(enrollPath)
+            val contactUrl = URL(contactsPath)
             thread {
-                uuid = enrollURL.readText(Charsets.UTF_8)
-                val connection = contactURL.openConnection() as HttpURLConnection
-                connection.setRequestProperty(uuid_header, uuid)
+                uuid = enrollUrl.readText(Charsets.UTF_8)
+                val connection = contactUrl.openConnection() as HttpURLConnection
+                connection.setRequestProperty(uuidHeader, uuid)
                 val data = connection.inputStream.bufferedReader().use { it.readText() }
                 val contacts = Gson().fromJson(data, Array<ContactDTO>::class.java)
                 updateFromServer(contacts)
@@ -41,12 +41,50 @@ class ContactsViewModel(private val repository: ContactsRepository) : ViewModel(
     }
 
     fun refresh() {
+        if (uuid == null) {
+            return
+        }
         viewModelScope.launch {
-            repository.refresh()
+            allContacts.value?.forEach {
+                when (it.status) {
+                    ContactStatus.NEW -> {
+                        postToServer(it)
+                    }
+                    ContactStatus.MODIFIED -> update(it)
+                    ContactStatus.DELETED -> delete(it)
+                    else -> {}
+                }
+            }
         }
     }
 
-    fun updateFromServer(contacts: Array<ContactDTO>) {
+    fun insert(contact: Contact) {
+        viewModelScope.launch {
+            contact.status = ContactStatus.NEW
+            val id = repository.insert(contact)
+            println("Inserted contact with id: $id")
+        }
+    }
+
+    fun deleteAll() {
+        viewModelScope.launch {
+            repository.deleteAll()
+        }
+    }
+
+    fun delete(contact: Contact) {
+        viewModelScope.launch {
+            repository.softDelete(contact)
+        }
+    }
+
+    fun update(contact: Contact) {
+        viewModelScope.launch {
+            repository.update(contact)
+        }
+    }
+
+    private fun updateFromServer(contacts: Array<ContactDTO>) {
         viewModelScope.launch {
             deleteAll()
             contacts.forEach { contact ->
@@ -59,30 +97,29 @@ class ContactsViewModel(private val repository: ContactsRepository) : ViewModel(
         }
     }
 
-    fun insert(contact: Contact) {
-        viewModelScope.launch {
-            contact.status = ContactStatus.NEW
-            val id = repository.insert(contact)
-            println("Inserted contact with id: $id")
-
+    private fun postToServer(contact: Contact) {
+        if (uuid == null) {
+            throw Exception("UUID is null")
         }
-    }
-
-    fun deleteAll() {
         viewModelScope.launch {
-            repository.deleteAll()
-        }
-    }
-
-    fun delete(contact: Contact) {
-        viewModelScope.launch {
-            repository.delete(contact)
-        }
-    }
-
-    fun update(contact: Contact) {
-        viewModelScope.launch {
-            repository.update(contact)
+            val contactUrl = URL(contactsPath)
+            thread {
+                val connection = contactUrl.openConnection() as HttpURLConnection
+                connection.requestMethod = "POST"
+                connection.setRequestProperty(uuidHeader, uuid)
+                connection.setRequestProperty("Content-Type", "application/json")
+                connection.doOutput = true
+                connection.outputStream.bufferedWriter(Charsets.UTF_8).use {
+                    it.write(Gson().toJson(ContactDTO.fromContact(contact)))
+                }
+                if (connection.responseCode == 201) {
+                    connection.inputStream.bufferedReader().use {
+                        val c = Gson().fromJson(it.readText(), ContactDTO::class.java)
+                        println("Contact created with id: ${c.id}")
+                        update(c.toContact(contact.id))
+                    }
+                }
+            }
         }
     }
 

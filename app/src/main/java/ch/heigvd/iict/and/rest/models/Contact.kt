@@ -32,9 +32,7 @@ data class Contact(@PrimaryKey(autoGenerate = true) var id: Long? = null,
                 phoneNumber == other.phoneNumber
 
     override fun toString(): String {
-        return  "Contact(id: $id, name: $name, firstname: $firstname, " +
-                "birthday: $birthday, email :$email, address: $address, zip: $zip, city: $city, " +
-                "type: $type, phoneNumber: $phoneNumber)"
+        return "Contact(id=$id, remote_id=$remote_id, status=$status, name='$name', firstname=$firstname, birthday=$birthday, email=$email, address=$address, zip=$zip, city=$city, type=$type, phoneNumber=$phoneNumber)"
     }
 
     override fun hashCode(): Int {

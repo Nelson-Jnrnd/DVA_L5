@@ -54,6 +54,8 @@ class ContactsAdapter(contacts : List<Contact>, private val clickListener: OnIte
 
             if (contact.status == ContactStatus.OK) {
                 image.setColorFilter(ContextCompat.getColor(image.context, android.R.color.holo_green_dark))
+            } else if (contact.status == ContactStatus.DELETED) { // TODO c'est juste pour voir si le soft delete marche
+                image.setColorFilter(ContextCompat.getColor(image.context, android.R.color.holo_blue_dark))
             } else {
                 image.setColorFilter(ContextCompat.getColor(image.context, android.R.color.holo_red_dark))
             }

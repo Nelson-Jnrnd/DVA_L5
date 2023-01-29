@@ -20,16 +20,16 @@ interface ContactsDao {
     @Delete
     fun delete(contact: Contact)
 
-    @Query("SELECT * FROM Contact /*WHERE NOT status = 'DELETED'*/")
+    @Query("SELECT * FROM Contact WHERE NOT status = 'DELETED'")
     fun getAllContactsLiveData() : LiveData<List<Contact>>
 
-    @Query("SELECT * FROM Contact /*WHERE NOT status = 'DELETED'*/")
+    @Query("SELECT * FROM Contact WHERE NOT status = 'DELETED'")
     fun getAllContacts() : List<Contact>
 
-    @Query("SELECT * FROM Contact WHERE id = :id /*AND NOT status = 'DELETED' */LIMIT 1")
+    @Query("SELECT * FROM Contact WHERE id = :id AND NOT status = 'DELETED' LIMIT 1")
     fun getContactById(id : Long) : Contact?
 
-    @Query("SELECT COUNT(*) FROM Contact /*WHERE NOT status = 'DELETED'*/")
+    @Query("SELECT COUNT(*) FROM Contact WHERE NOT status = 'DELETED'")
     fun getCount() : Int
 
     @Query("DELETE FROM Contact")

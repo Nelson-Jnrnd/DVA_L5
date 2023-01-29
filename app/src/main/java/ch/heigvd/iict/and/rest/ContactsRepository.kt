@@ -24,24 +24,26 @@ class ContactsRepository(private val contactsDao: ContactsDao) {
         }
     }
 
-    suspend fun delete(contact: Contact) {
-        //contact.status = ContactStatus.DELETED
+    suspend fun softDelete(contact: Contact) {
+        contact.status = ContactStatus.DELETED
         withContext(Dispatchers.IO) {
             contactsDao.update(contact)
         }
     }
 
     suspend fun update(contact: Contact) {
-        //contact.status = ContactStatus.MODIFIED
         withContext(Dispatchers.IO) {
+            println("*****************")
+            println("Updating contact $contact")
             contactsDao.update(contact)
+            println("*****************")
+            println("Updated contact $contact")
         }
     }
 
     suspend fun deleteAll() {
         withContext(Dispatchers.IO) {
             contactsDao.getAllContacts().forEach {
-                //it.status = ContactStatus.DELETED
                 contactsDao.delete(it)
             }
         }
