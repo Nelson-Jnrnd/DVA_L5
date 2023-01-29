@@ -29,4 +29,8 @@ class EditFragment : Fragment() {
         // TODO: Use the ViewModel
     }
 
+    private fun delete() {
+        println("Delete")
+    }
+
 }

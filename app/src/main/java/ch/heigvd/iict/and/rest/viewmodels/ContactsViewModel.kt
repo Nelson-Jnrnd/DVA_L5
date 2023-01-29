@@ -52,6 +52,23 @@ class ContactsViewModel(private val repository: ContactsRepository, private val 
         }
     }
 
+    fun delete(contactID: Long) {
+        viewModelScope.launch {
+            val contactURL = URL(contactsPath + "/$contactID")
+            thread {
+                uuid = contactURL.readText(Charsets.UTF_8)
+                val connection = contactURL.openConnection() as HttpURLConnection
+                connection.requestMethod = "DELETE"
+                connection.doOutput = false
+                connection.setRequestProperty(uuid_header, uuid)
+
+                delete(contactID)
+
+                println("Enrolled contact $contactID with UUID $uuid")
+            }
+        }
+    }
+
     fun refresh() {
         if (uuid == null) {
             return
